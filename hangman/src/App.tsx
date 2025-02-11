@@ -5,9 +5,13 @@ function App() {
 
  const [randomWord, setRandomWord] = useState("Hangman");
 
+
+
+
   return (
     <>
     <h1>Welcome To Hangman!</h1>
+    <button type="button" onClick={()=>setRandomWord(GenerateWord())}></button>
     <p>Your word has {randomWord.length} letters.</p>
     <p>Press a letter below to guess!</p>
     <ul>
@@ -43,8 +47,20 @@ function App() {
   )
 }
 
-export function GenerateWord(){
- let apiWord = 
+function GenerateWord(): string {
+ const url = "https://random-word-api.vercel.app/api?words=1";
+
+ fetch(url)
+ .then((response) => {
+   return response.json();
+ })
+ .then((data) => {
+  console.log(data[0]);
+  return data[0];
+ })
+
+ return "ERROR";
+ 
 }
 
 export default App
