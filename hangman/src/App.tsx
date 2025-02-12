@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import './App.css'
 import AlphabetButtons from './Buttons';
 
@@ -6,6 +6,7 @@ function App() {
 
  const [randomWord, setRandomWord] = useState("Hangman");
  const [correctLetters, setWordReveal] = useState("randomWord");
+ const [livesRemaining, setLives] = useState(10);
 
 
  async function GenerateWord(): Promise<string> {
@@ -24,6 +25,7 @@ function App() {
     const word = await GenerateWord();
     setWordReveal(updateWordReveal())
     setRandomWord(word);
+    setLives(10);
   };
 
   return (
@@ -33,6 +35,7 @@ function App() {
     <p>Your word has {randomWord.length} letters.</p>
     <p>Press a letter below to guess!</p>
    <AlphabetButtons onLetterClick={CheckGuess}/>
+   <p>Lives Remaining - {livesRemaining}</p>
     <h2>{correctLetters}</h2>
     </>
   )
@@ -42,10 +45,10 @@ function App() {
     const normalizedWord = randomWord.toLowerCase();
     const normalizedGuess = guessLetter.toLowerCase();
 
+    setLives(livesRemaining - 1);
+
     if (normalizedWord.indexOf(normalizedGuess) > -1) {
       console.log("That's a correct guess!");
-
-    
 
       return;
     }
