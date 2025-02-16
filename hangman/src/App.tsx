@@ -5,7 +5,7 @@ import AlphabetButtons from './Buttons';
 function App() {
 
  const [randomWord, setRandomWord] = useState("Hangman");
- const [correctLetters, setWordReveal] = useState("randomWord");
+ const [correctLetters, setWordReveal] = useState("X".repeat(randomWord.length));
  const [livesRemaining, setLives] = useState(10);
 
 
@@ -45,11 +45,15 @@ function App() {
     const normalizedWord = randomWord.toLowerCase();
     const normalizedGuess = guessLetter.toLowerCase();
 
+    if(livesRemaining <= 0){
+      return;
+    }
+
     setLives(livesRemaining - 1);
 
     if (normalizedWord.indexOf(normalizedGuess) > -1) {
       console.log("That's a correct guess!");
-
+      correctGuess(guessLetter);
       return;
     }
 
@@ -62,7 +66,20 @@ function updateWordReveal(): string {
 
    return tempString;
 }
+
+// Updates the revealed word by replacing 'X's with correctly guessed letters
+function correctGuess(letter: string) {
+  setWordReveal((prevWord) => {
+    return randomWord
+      .split("")
+      .map((char, index) => (char.toLowerCase() === letter.toLowerCase() ? char : prevWord[index]))
+      .join("");
+  });
 }
+
+}
+
+
 
 
 
