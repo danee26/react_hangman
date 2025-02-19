@@ -5,7 +5,9 @@ import AlphabetButtons from './Buttons';
 function App() {
 
  const [randomWord, setRandomWord] = useState("Hangman");
+ const [titleString, setTitleString] = useState("Welcome To Hangman!");
  const [correctLetters, setWordReveal] = useState("X".repeat(randomWord.length));
+ const [lettersRemaining, setLettersRemaining] = useState(randomWord.length);
  const [livesRemaining, setLives] = useState(10);
 
 
@@ -23,20 +25,24 @@ function App() {
 }
   const handleClick = async () => {
     const word = await GenerateWord();
-    setWordReveal(updateWordReveal())
+    console.log(word);
+
     setRandomWord(word);
+    setWordReveal(updateWordReveal())
     setLives(10);
+    setTitleString("Welcome To Hangman!");
+    setLettersRemaining(randomWord.length);
   };
 
   return (
     <>
-    <h1>Welcome To Hangman!</h1>
+    <h1 style={{ width: "400px", textAlign: "center", wordWrap: "break-word", overflowWrap: "break-word" }}>{titleString}</h1>
     <button type="button" onClick={handleClick}>Generate New Word</button>
-    <p>Your word has {randomWord.length} letters.</p>
     <p>Press a letter below to guess!</p>
    <AlphabetButtons onLetterClick={CheckGuess}/>
    <p>Lives Remaining - {livesRemaining}</p>
     <h2>{correctLetters}</h2>
+    <p>{lettersRemaining} letters remaining.</p>
     </>
   )
 
@@ -46,6 +52,7 @@ function App() {
     const normalizedGuess = guessLetter.toLowerCase();
 
     if(livesRemaining <= 0){
+      setTitleString("You Lose! Try Again...");
       return;
     }
 
@@ -70,10 +77,20 @@ function updateWordReveal(): string {
 // Updates the revealed word by replacing 'X's with correctly guessed letters
 function correctGuess(letter: string) {
   setWordReveal((prevWord) => {
-    return randomWord
+    //I need to track correct letters here incase the same letter covers more than 1 letter in the random word.
+    let correctLetterCount = 0;
+    const newWord = randomWord
       .split("")
-      .map((char, index) => (char.toLowerCase() === letter.toLowerCase() ? char : prevWord[index]))
+      .map((char, index) => {
+        if (char.toLowerCase() === letter.toLowerCase()) {
+          correctLetterCount++;
+          return char;
+        }
+        return prevWord[index];
+      })
       .join("");
+      setLettersRemaining(lettersRemaining - correctLetterCount)
+  return newWord;
   });
 }
 
